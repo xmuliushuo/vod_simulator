@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+using namespace std;
+
 void ParseConfigFile(string, map<string, string> &);
 
 #endif

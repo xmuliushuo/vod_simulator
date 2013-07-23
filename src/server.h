@@ -4,14 +4,17 @@
 #include <map>
 #include <string>
 
+using namespace std;
+
 class Server {
 public:
 	Server();
 	~Server();
-	bool Init(std::map<std::string, std::string> &);
+	bool Init(map<string, string> &);
 	void Run();
 private:
 	bool p2p_;
+	int port_;
 };
 
 #endif

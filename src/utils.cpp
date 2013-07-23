@@ -14,7 +14,7 @@ void ParseConfigFile(string config_filename, map<string, string> &keymap) {
 	infile.open(config_filename);
 
 	string line;
-	while(getline(infile, line)){
+	while (getline(infile, line)) {
 		if(line.empty())
 			continue;
 		Trim(line);
