@@ -1,5 +1,8 @@
+#include <iostream>
 #include "utils.h"
-#include <iostrem>
+#include "server.h"
+
+using namespace std;
 
 int main()
 {
@@ -7,7 +10,7 @@ int main()
 	map<string, string> config_info;
 	ParseConfigFile(config_file_name, config_info);
 	Server *server = new Server();
-	if (server->Init())
+	if (server->Init(config_info))
 		server->Run();
 	else {
 		cout << "server init error" << endl;

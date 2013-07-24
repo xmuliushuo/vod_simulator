@@ -12,16 +12,6 @@
 #include <pthread.h>
 #include <functional>
 
-using namespace std;
-
-struct TimerEvent{
-	long long leftTime;
-	//pthread_t tid;
-	int sockfd;
-	bool isNew;
-	char buffer[20];
-};
-
 inline bool operator < (const TimerEvent &event1,const TimerEvent &event2){
 	return event1.leftTime < event2.leftTime;
 }

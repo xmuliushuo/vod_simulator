@@ -1,8 +1,8 @@
 #ifndef SERVER_H_
 #define SERVER_H_
 
-#include <map>
 #include <string>
+#include <map>
 
 using namespace std;
 

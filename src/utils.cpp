@@ -5,13 +5,13 @@
 using namespace std;
 
 static void Trim(string &str){
-	str.erase(0, s.find_first_not_of(" "));
-	str.erase(s.find_last_not_of(" ") + 1);
+	str.erase(0, str.find_first_not_of(" "));
+	str.erase(str.find_last_not_of(" ") + 1);
 }
 
 void ParseConfigFile(string config_filename, map<string, string> &keymap) {
 	ifstream infile;
-	infile.open(config_filename);
+	infile.open(config_filename.c_str());
 
 	string line;
 	while (getline(infile, line)) {
