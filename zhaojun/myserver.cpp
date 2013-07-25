@@ -33,10 +33,7 @@ MyServer::MyServer(double bandWidth,int blockSize,int perSendSize,bool isP2POpen
 		char **clusterAddress,int takeSampleFre,bool isUseRealDevice,int period,double lrfuLambda,
 		char *bufferStrategy,int blockNums){
 	mBand = bandWidth;
-	mBlockSize = blockSize / 1000;
-	mBlockNum = blockNums;
 	mPerSendSize = perSendSize;
-	mIsP2POpen = isP2POpen;
 
 	mPeriod = period;
 	mLrfuLambda = lrfuLambda;

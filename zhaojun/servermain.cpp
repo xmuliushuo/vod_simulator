@@ -78,7 +78,6 @@ int main(){
 
 	period = atoi(keyMap["Period"].c_str());
 	lrfulambda = atoi(keyMap["LrfuLambda"].c_str());
-	bufferStrategy = const_cast<char *>(keyMap["ServerStrategy"].c_str());
 
 	thelta = atoi(keyMap["Thelta"].c_str());
 	lambda = atoi(keyMap["Lambda"].c_str());

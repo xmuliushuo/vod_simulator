@@ -1,5 +1,7 @@
 #include "dbufferdw.h"
 
+#include <cassert>
+
 DBufferDW::DBufferDW(int blockSize, int blockNum, int period): DBuffer(blockSize,blockNum)
 {
 	
@@ -16,11 +18,10 @@ DBufferDW::~DBufferDW()
 
 bool DBufferDW::Read(int fileId, int segId)
 {
-	assert(mDWQueue.size() <= mBlockNums);
-	for(list<DWBlockInfo>::iterator it = mDWQueue.begin(); it != mDWQueue.end(); ++it) {
+	for(list<Block>::iterator it = mDWQueue.begin(); it != mDWQueue.end(); ++it) {
 		if (it->fileId == fileId && it->segId == segId) {
 			++(it->hitNew);
-	/*		DWBlockInfo block = *it;
+	/*		Block block = *it;
 			mDWQueue.erase(it);
 			mDWQueue.push_back(block);*/
 			return true;
@@ -33,8 +34,8 @@ void DBufferDW::Write(int fileId, int segId, int &ofileId, int &osegId)
 {
 	ofileId = -1;
 	osegId = -1;
-	assert(mDWQueue.size() <= mBlockNums);
-	if (mDWQueue.size() == mBlockNums)
+	assert(mBlockNums >= 0);
+	if (mDWQueue.size() == static_cast<unsigned int>(mBlockNums))
 		Strategy(fileId, segId, ofileId, osegId);
 	else
 		AddBlock(fileId, segId);
@@ -42,10 +43,9 @@ void DBufferDW::Write(int fileId, int segId, int &ofileId, int &osegId)
 
 void DBufferDW::Strategy(int fileId, int segId, int &ofileId, int &osegId)
 {
-	assert(mDWQueue.size() == mBlockNums);
 	const int MAX = 99999999;
 	int minWeight = MAX;
-	list<DWBlockInfo>::iterator iter, minIter;
+	list<Block>::iterator iter, minIter;
 
 	for(iter = mDWQueue.begin(); iter != mDWQueue.end(); ++iter){
 		iter->weight = (iter->hitNew + iter->hitOld);
@@ -65,7 +65,7 @@ void DBufferDW::Strategy(int fileId, int segId, int &ofileId, int &osegId)
  */
 void DBufferDW::BlockReset()
 {
-	for(list<DWBlockInfo>::iterator it = mDWQueue.begin(); it != mDWQueue.end(); ++it) {
+	for(list<Block>::iterator it = mDWQueue.begin(); it != mDWQueue.end(); ++it) {
 		it->hitOld = it->hitNew;
 		it->hitNew = 0;
 	}
@@ -73,7 +73,7 @@ void DBufferDW::BlockReset()
 
 bool DBufferDW::FindBlock(int fileId,int segId)
 {
-	for(list<DWBlockInfo>::iterator it = mDWQueue.begin(); it != mDWQueue.end(); ++it) {
+	for(list<Block>::iterator it = mDWQueue.begin(); it != mDWQueue.end(); ++it) {
 		if (it->fileId == fileId && it->segId == segId) {
 			return true;
 		}
@@ -83,7 +83,7 @@ bool DBufferDW::FindBlock(int fileId,int segId)
 
 void DBufferDW::AddBlock(int fileId, int segId)
 {
-	DWBlockInfo newBlock(fileId, segId);
+	Block newBlock(fileId, segId);
 	mDWQueue.push_back(newBlock);
 }
 

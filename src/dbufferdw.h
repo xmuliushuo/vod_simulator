@@ -1,26 +1,18 @@
-#ifndef DBUFFERFIFOS_H
-#define DBUFFERFIFOS_H
+#ifndef DBUFFERDW_H
+#define DBUFFERDW_H
 
 #include "dbuffer.h"
 
 #include <map>
 #include <set>
+#include <list>
 
 using namespace std;
 
-class FIFOSBlockInfo {
+class DBufferDW: public DBuffer {
 public:
-	FIFOSBlockInfo();
-	FIFOSBlockInfo(int _fileId, int _segId): fileId(_fileId), segId(_segId), weight(0) {};
-	int fileId;
-	int segId;
-	int weight;
-};
-
-class DBufferFIFOS: public DBuffer {
-public:
-	DBufferFIFOS(int blockSize, int blockNum);
-	virtual ~DBufferFIFOS();
+	DBufferDW(int blockSize, int blockNum, int period);
+	virtual ~DBufferDW();
 	virtual bool Read(int fileId, int segId);
 	virtual void Write(int fileId, int segId, int &ofileId, int &osegId);
 	virtual void Strategy(int fileId, int segId, int &ofileId, int &osegId);
@@ -31,8 +23,7 @@ public:
 private:
 	void AddBlock(int fileId, int segId);
 	int GetVistorNum(int fileId);
-	list<FIFOSBlockInfo> mFIFOQueue;
-	//int mBlockNum;
+	list<Block> mDWQueue;
 	map<int, set<int> > mFileVistors;
 };
 

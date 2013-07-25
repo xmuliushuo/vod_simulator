@@ -75,7 +75,6 @@ int main(){
 
 	serverBand = atof(keyMap["ServerBand"].c_str());
 	clientBand = atof(keyMap["ClientBand"].c_str());
-	blockSize = atoi(keyMap["BlockSize"].c_str());
 	perSendSize = atoi(keyMap["PerSendSize"].c_str());
 	isP2POpen = !strcmp(keyMap["isP2POpen"].c_str(),"true") ? true : false;
 	isRepeat = !strcmp(keyMap["isRepeat"].c_str(),"true") ? true : false;
@@ -86,7 +85,6 @@ int main(){
 	maxLength = atoi(keyMap["MaxLength"].c_str());
 	minLength = atoi(keyMap["MinLength"].c_str());
 	bitRate = atof(keyMap["BitRate"].c_str());
-	blockNums = atoi(keyMap["BlockNums"].c_str());
 	thelta = atoi(keyMap["Thelta"].c_str());
 	lambda = atoi(keyMap["Lambda"].c_str());
 	zeta = atoi(keyMap["BackZeta"].c_str());

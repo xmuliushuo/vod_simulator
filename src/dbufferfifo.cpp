@@ -13,7 +13,7 @@ DBufferFIFO::~DBufferFIFO(){
 
 bool DBufferFIFO::FindBlock(int fileId,int segId){//,bool locked){
 	if(!m_blockList.empty()){
-		std::list<FIFOBlock>::iterator listIter = m_blockList.begin();
+		std::list<Block>::iterator listIter = m_blockList.begin();
 		while(listIter != m_blockList.end()){
 			if(listIter->fileId == fileId && listIter->segId == segId){
 				return true;
@@ -32,7 +32,7 @@ void DBufferFIFO::Write(int fileId,int segId,int &ofileId,int &osegId){
 	ofileId = -1;
 	osegId = -1;
 	if(m_curBlockNum < mBlockNums){
-		m_blockList.push_front(FIFOBlock(fileId,segId));
+		m_blockList.push_front(Block(fileId,segId));
 		m_curBlockNum++;
 	}
 	else{
@@ -42,10 +42,10 @@ void DBufferFIFO::Write(int fileId,int segId,int &ofileId,int &osegId){
 
 
 void DBufferFIFO::Strategy(int fileId,int segId,int &ofileId,int &osegId){
-	list<FIFOBlock>::iterator listIter = m_blockList.end();
+	list<Block>::iterator listIter = m_blockList.end();
 	listIter--;
 	ofileId = listIter->fileId;
 	osegId = listIter->segId;
 	m_blockList.erase(listIter);
-	m_blockList.push_front(FIFOBlock(fileId,segId));
+	m_blockList.push_front(Block(fileId,segId));
 }

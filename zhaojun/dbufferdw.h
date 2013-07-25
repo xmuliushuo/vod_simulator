@@ -34,7 +34,6 @@ private:
 	void AddBlock(int fileId, int segId);
 	int GetVistorNum(int fileId);
 	list<DWBlockInfo> mDWQueue;
-	//int mBlockNum;
 	map<int, set<int> > mFileVistors;
 };
 
