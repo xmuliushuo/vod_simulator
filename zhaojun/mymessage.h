@@ -8,7 +8,6 @@
 
 using namespace std;
 
-#define MSG_CLIENT_JOIN  		0
 #define MSG_REQUEST_SEG			1
 #define MSG_DELETE_SEG			2
 #define MSG_FAKE_FIN			3
@@ -18,7 +17,6 @@ using namespace std;
 #define MSG_REDIRECT			7
 #define MSG_SEG_ASK				8
 #define MSG_SEG_ACK				9
-#define MSG_JOIN_ACK			10
 #define MSG_CLIENT_LEAVE		11
 #define MSG_CONNECT_FIN		12
 #define MSG_SEG_FIN			13

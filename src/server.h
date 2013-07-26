@@ -22,7 +22,7 @@ public:
 	~Server();
 	bool Init(map<string, string> &);
 	void Run();
-	void ThreadPerClient();
+	void ThreadPerClient(int connfd);
 private:
 	bool m_p2p;
 	int m_port;

@@ -1,11 +1,3 @@
-/*
- * myclient.cpp
- *
- *  Created on: 2013-2-21
- *      Author: zhaojun
- */
-
-#include "myclient.h"
 
 #include <sys/epoll.h>
 #include <sys/socket.h>
@@ -13,7 +5,6 @@
 #include <memory.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <netinet/tcp.h>
 #include <sstream>
 

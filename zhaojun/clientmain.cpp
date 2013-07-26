@@ -46,9 +46,6 @@ int main(){
 
 	std::map<std::string,std::string> keyMap;
 
-	char *configFileName = "./config/simulator.cfg";
-	ParseConfigFile(configFileName,keyMap);
-
 	double serverBand,clientBand;
 	int blockSize,perSendSize;
 	bool isP2POpen;
@@ -94,7 +91,6 @@ int main(){
 	playToForward = atoi(keyMap["PlayToForward"].c_str());
 	playToBackward = atoi(keyMap["PlayToBackward"].c_str());
 	playToStop = atoi(keyMap["PlayToStop"].c_str());
-	clientNums = atoi(keyMap["ClientNums"].c_str());
 	devNums = atoi(keyMap["DevNums"].c_str());
 	serverPort = atoi(keyMap["ServerPort"].c_str());
 	clientPort = atoi(keyMap["ClientPort"].c_str());
@@ -140,7 +136,6 @@ int main(){
 	pthread_join(clientManage->GetTid(),NULL);
 
 	keyMap.clear();
-//	delete server;
 	delete clientManage;
 
 //	exit(0);

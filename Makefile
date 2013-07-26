@@ -3,9 +3,22 @@ SOURCES = $(wildcard src/*.cpp)
 OBJS := $(patsubst %.cpp, %.o,$(SOURCES))
 DEPE=${OBJS:%.o=%.d}
 
+SERVER=src/dbufferdw.o\
+	src/dbufferfifo.o\
+	src/server.o\
+	src/servermain.o\
+	src/utils.o
+
+CLIENT=src/clientmain.o\
+	src/utils.o\
+	src/client.o
+
 CC = g++
-server: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) -o server
+all:server client
+server: $(SERVER)
+	$(CC) $(SERVER) $(CFLAGS) -o server
+client: $(CLIENT)
+	$(CC) $(CLIENT) $(CFLAGS) -o client
 -include $(DEPE)
 
 depend:$(DEPE)

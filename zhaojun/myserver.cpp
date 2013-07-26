@@ -466,23 +466,6 @@ void MyServer::DealWithMessage(char *buf,int length){
 	int type = *ptr;
 	ptr++;
 	switch(type){
-	case MSG_CLIENT_JOIN:{ //客户端加入消息
-		int clientNum = *ptr;
-
-		char buffer[20];
-		int *tmpPtr = (int *)buffer;
-		*tmpPtr = MSG_JOIN_ACK;
-		tmpPtr++;
-		*tmpPtr = 0;
-
-		LOG_INFO("");
-		LOG_INFO("server receive MSG_CLIENT_JOIN from " << clientNum <<
-				" and response MSG_JOIN_ACK");
-
-		send(mClientInfo[clientNum].recvFd,buffer,20,0);
-
-		break;
-	}
 	case MSG_CLIENT_LEAVE:{ //客户端退出消息
 		int clientNum = *ptr;
 		epoll_event ev;

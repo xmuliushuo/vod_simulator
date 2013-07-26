@@ -7,13 +7,14 @@
 #include <cstring>
 #include <cassert>
 
-#include "vod.h"
+#include "utils.h"
+#include "message.h"
 
 void *ThreadPerClient_(void *arg)
 {
 	Pthread_detach(pthread_self());
 	struct RequestArgs *ptr = (struct RequestArgs *)arg;
-	ptr->server->ThreadPerClient();
+	ptr->server->ThreadPerClient(ptr->connfd);
 	free(ptr);
 	return (void *)NULL;
 }
@@ -65,14 +66,36 @@ void Server::Run()
 	while (true) {
 		args = (struct RequestArgs *)Malloc(sizeof(struct RequestArgs));
 		clilen = sizeof(args->cliaddr);
-		connfd = Accept(socketid, (struct sockaddr *)&(args->cliaddr), &clilen);
+		connfd = Accept(socketid, 
+			            (struct sockaddr *)&(args->cliaddr), 
+			            &clilen);
 		args->server = this;
 		args->connfd = connfd;
 		Pthread_create(&tid, NULL, ThreadPerClient_, args);
 	}
 }
 
-void Server::ThreadPerClient()
+void Server::ThreadPerClient(int connfd)
 {
-
+	int length;
+	char buffer[MESSAGELEN];
+	char response[MESSAGELEN];
+	int *ptr, *resptr;
+	int clientid;
+	while (true) {
+		length = read(connfd, buffer, MESSAGELEN);
+		assert(length == MESSAGELEN);
+		ptr = (int *)buffer;
+		switch(ptr[0]) {
+		case MSG_CLIENT_JOIN:
+			clientid = ptr[1];
+			cout << "server receive MSG_CLIENT_JOIN from " << clientid <<
+				" and response MSG_JOIN_ACK" << endl;
+			resptr = (int *)response;
+			resptr[0] = MSG_JOIN_ACK;
+			resptr[1] = 0;
+			length = send(connfd, response, MESSAGELEN, 0);
+			assert(length == MESSAGELEN);
+		}
+	}
 }

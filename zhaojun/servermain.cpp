@@ -13,14 +13,9 @@
 
 #include <string.h>
 
-#include <map>
-#include <string>
-
 #include <sstream>
 
 #include "log.h"
-
-using namespace std;
 
 MyTimer globalTimer(1);
 
