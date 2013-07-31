@@ -10,7 +10,7 @@
 #include "utils.h"
 #include "message.h"
 
-Client::Client()
+Client::Client(int id): m_id(id)
 {
 
 }
@@ -41,20 +41,28 @@ bool Client::Init(map<string, string> &config)
 void Client::Run()
 {
 	int socketid = Socket(AF_INET, SOCK_STREAM, 0);
+	int length;
 	struct sockaddr_in serveraddr;
-	char message[MESSAGELEN];
 	char buffer[MESSAGELEN];
-	int *ptr = (int *)message;
+	char response[MESSAGELEN];
+	int *ptr = (int *)buffer;
+	int *resptr = (int *)response;
 	ptr[0] = MSG_CLIENT_JOIN;
-	ptr[1] = 0;
+	ptr[1] = m_id;
 	bzero(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
-	//Inet_pton(AF_INET, m_serverip, &serveraddr.sin_addr);
 	serveraddr.sin_addr.s_addr = inet_addr(m_serverip.c_str());
 	serveraddr.sin_port = htons(m_server_port);
 	Connect(socketid, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
-	send(socketid, message, MESSAGELEN, 0);
+	send(socketid, buffer, MESSAGELEN, 0);
 	while (true) {
-		read(socketid, buffer, MESSAGELEN);
+		length = read(socketid, buffer, MESSAGELEN);
+		assert(length == MESSAGELEN);
+		switch (ptr[0]) {
+		case MSG_JOIN_ACK:
+			resptr[0] = MSG_SEG_ASK;
+			resptr[0] = m_id;
+			break;
+		}
 	}
 }

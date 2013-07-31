@@ -71,123 +71,6 @@ MyClient::MyClient(ModelAssemble *model,int blockSize,int perSendSize,
 	else if(strcmp(mBufferStrategy,"LFUT") == 0){
 		mDbuffer = new DBufferLFUT(blockSize,mBlockNum,mClientNum);
 	}
-	else if(strcmp(mBufferStrategy,"MFUT") == 0){
-		mDbuffer = new DBufferMFUT(blockSize,mBlockNum,mClientNum);
-	}
-	else if(strcmp(mBufferStrategy,"MFUR") == 0){
-		mDbuffer = new DBufferMFUR(blockSize,mBlockNum,mClientNum);
-	}
-	else if(strcmp(mBufferStrategy,"LRUR") == 0){
-		mDbuffer = new DBufferLRUR(blockSize,mBlockNum,mClientNum);
-	}
-	else if(strcmp(mBufferStrategy,"LFRU") == 0){
-		mDbuffer = new DBufferLFRU(blockSize,mBlockNum,mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"PLFU") == 0){
-		mDbuffer = new DBufferPLFU(blockSize,mBlockNum,mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"LFU") == 0){
-		mDbuffer = new DBufferLFU(blockSize,mBlockNum);
-	}
-	else if(strcmp(mBufferStrategy,"MFU") == 0){
-		mDbuffer = new DBufferMFU(blockSize,mBlockNum);
-	}
-	else if(strcmp(mBufferStrategy,"LRFU") == 0){
-		mDbuffer = new DBufferLRFU(blockSize,mBlockNum,mLrfuLambda);
-	}
-	else if(strcmp(mBufferStrategy,"FIFO") == 0){
-		mDbuffer = new DBufferFIFO(blockSize,mBlockNum);
-	}
-	else if(strcmp(mBufferStrategy,"DWQ") == 0){
-		mDbuffer = new DBufferDWQ(blockSize,mBlockNum,mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"DWQR") == 0){
-		mDbuffer = new DBufferDWQR(blockSize,mBlockNum,mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"DWK") == 0){
-		mDbuffer = new DBufferDWK(blockSize,mBlockNum,mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"DWKR") == 0){
-		mDbuffer = new DBufferDWKR(blockSize,mBlockNum,mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"DW") == 0){
-		mDbuffer = new DBufferDW(blockSize,mBlockNum,mPeriod);
-	}
-	else if(strcmp(mBufferStrategy, "DWR") == 0) {
-		mDbuffer = new DBufferDWR(blockSize, mBlockNum, mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC1") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,1);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC2") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,2);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC3") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,3);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC4") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,4);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC5") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,5);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC6") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,6);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC7") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,7);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC8") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,8);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC9") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,9);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC10") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,10);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC11") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,11);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC12") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,12);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC13") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,13);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC14") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,14);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC15") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,15);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC16") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,16);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC17") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,17);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC18") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,18);
-	}
-	else if(strcmp(mBufferStrategy,"DWCC19") == 0){
-		mDbuffer = new DBufferDWCC(blockSize,mBlockNum,mPeriod,19);
-	}
-	else if(strcmp(mBufferStrategy,"DWCCT1") == 0){
-		mDbuffer = new DBufferDWCCT(blockSize,mBlockNum,mPeriod,mClientNum,1);
-	}
-	else if(strcmp(mBufferStrategy,"DWCCT2") == 0){
-		mDbuffer = new DBufferDWCCT(blockSize,mBlockNum,mPeriod,mClientNum,2);
-	}
-	else if(strcmp(mBufferStrategy,"DWCCT3") == 0){
-		mDbuffer = new DBufferDWCCT(blockSize,mBlockNum,mPeriod,mClientNum,3);
-	}
-	else if(strcmp(mBufferStrategy,"DWCCT4") == 0){
-		mDbuffer = new DBufferDWCCT(blockSize,mBlockNum,mPeriod,mClientNum,4);
-	}
-	else if(strcmp(mBufferStrategy,"DWCCT5") == 0){
-		mDbuffer = new DBufferDWCCT(blockSize,mBlockNum,mPeriod,mClientNum,5);
-	}
 	else {
 		assert(0);
 	}
@@ -382,7 +265,6 @@ void MyClient::Run(){
 		if(firstTime){
 			int connectFd;
 			char buffer[20];
-//			char nullChar;
 			read(events[0].data.fd,buffer,20);
 
 			struct sockaddr_in serverAddress;
@@ -398,7 +280,6 @@ void MyClient::Run(){
 
 			int flag = 1;
 			setsockopt(connectFd,IPPROTO_TCP,TCP_NODELAY,&flag,sizeof(flag));
-//			setsockopt( sock, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(flag) );
 
 			if(connect(connectFd,(struct sockaddr *)&serverAddress,sizeof(struct sockaddr)) == -1){
 				LOG_WRITE("Client " << mClientNum << " Connect 0 Error!",mRecordFs);
@@ -421,7 +302,6 @@ void MyClient::Run(){
 				globalTimer.RegisterTimer(timeEvent);
 				LOG_WRITE("",mRecordFs);
 				LOG_WRITE("client " << mClientNum << " has blockreset reset period:" << mPeriod,mRecordFs);
-				//BufferReset();
 			}	
 
 			firstTime = false;
@@ -436,9 +316,6 @@ void MyClient::Run(){
 				mJumpSeg = 1;
 				LOG_WRITE("client " << mClientNum << " JumpSeg:" << mJumpSeg,mRecordFs);
 			}
-
-//			if(!readOrWrite && mIsRepeat)
-//				iofs << mSeg
 
 			LOG_WRITE("",mRecordFs);
 			LOG_WRITE("client " << mClientNum << " start to join the network request fileId:" <<
@@ -555,8 +432,6 @@ void MyClient::Run(){
 						}
 					}
 
-//					if(mIsRepeat && !readOrWrite && mPlayerStatus == PLAY)
-//						iofs << mSegId << endl;
 					bool isPreFetch;
 					if(mPreFetch > 0)
 						isPreFetch = true;
@@ -640,13 +515,6 @@ void MyClient::Run(){
 						}
 						else
 							isRead = mDbuffer->Read(mFileId,mSegId);
-						//if(isRead){
-						//	LOG_WRITE("client " << mClientNum << " read segId:" << mSegId);
-						//}
-						//else{
-						//	LOG_WRITE("client " << mClientNum << " read failed segId:" << mSegId);
-						//}
-
 
 						if(readOrWrite){
 							if(!mSpecial){
@@ -680,14 +548,6 @@ void MyClient::Run(){
 						}
 
 						if(isRead || mSpecial){
-							//第一次转向客户端请求获得，需要修正一次
-//							if(mAskNum != 0 && toggleSwitch == 1){
-//								mHitTimes++;
-//								toggleSwitch = 0;
-//							}
-//							else if(mAskNum == 0 && toggleSwitch == 0){
-//								toggleSwitch = 1;
-//							}
 
 							if(!isFromBuffer){
 								mOldFileId = mFileId;
@@ -702,10 +562,6 @@ void MyClient::Run(){
 									(mDelayEndTime.tv_usec - mDelayBeginTime.tv_usec) / 1000000.0);
 							if(delayTime < 0.1)
 								delayTime = 0;
-//							mOFs << delayTime << endl;
-//							mOFs << ((mDelayEndTime.tv_sec - mDelayBeginTime.tv_sec) +
-//									(mDelayEndTime.tv_usec - mDelayBeginTime.tv_usec) / 1000000.0) << endl;
-//							mOFs.flush();
 
 							mOFs << mTotalTimes << " " << mHitTimes << endl;
 
@@ -717,23 +573,6 @@ void MyClient::Run(){
 							LOG_WRITE("client " << mClientNum << " play fileId:" << mFileId << ",segId:" << mSegId <<
 									",playtime:" << timeEvent.leftTime << " Hit times:" << mHitTimes << " TotalTimes:" << mTotalTimes,mRecordFs);
 							
-//							if(mSpecial){
-//								char addbuffer[20];
-//								int *tmpPtr = (int *)addbuffer;
-//								*tmpPtr = MSG_ADD_SEG;
-//								tmpPtr++;
-//								*tmpPtr = mClientNum;
-//								tmpPtr++;
-//								*tmpPtr = mFileId;
-//								tmpPtr++;
-//								*tmpPtr = mSegId;
-//								tmpPtr++;
-//								*tmpPtr = mReqList.size() - 1;//mLinkedNums;
-//								LOG_WRITE("");
-//								LOG_WRITE("client " << mClientNum << " send MSG_ADD_SEG fileId:" << mFileId <<
-//									",segId" << mSegId);
-//								send(mClientInfo[0].recvFd,addbuffer,20,0);
-//							}
 
 							if(!readOrWrite){
 								LOG_WRITE("",mRecordFs);
@@ -806,11 +645,6 @@ void MyClient::Run(){
 							}
 							mTotalTimes++;
 						}
-
-//						if(mIsReadFin && readOrWrite){
-//							oldSegId = mSegId;
-//							mSegId = readSegId;
-//						}
 					}
 				}
 			}
@@ -852,9 +686,6 @@ void MyClient::DealWithMessage(char *buf,int length){
 		LOG_WRITE("",mRecordFs);
 		LOG_WRITE("Client " << mClientNum << " receive MSG_CONNECT_FIN from " << clientNum <<
 				" and response MSG_CLIENT_JOIN " << mClientInfo[clientNum].recvFd,mRecordFs);
-//			LOG_WRITE("client all fd:" << sockFd[0] << "," << sockFd[1] << "," <<
-//					mPlaySockFd[0] << "," << mPlaySockFd[1] << "," << mListenSockFd[0] << "," <<
-//					mListenSockFd[1]);
 		break;
 	}
 	case MSG_CLIENT_JOIN:{
@@ -875,19 +706,10 @@ void MyClient::DealWithMessage(char *buf,int length){
 		break;
 	}
 	case MSG_JOIN_ACK:{
-//		char buffer[20];
-//		send(mPlaySockFd[1],buffer,20,0);
 		int clientNum = *ptr;
-		char buffer[20];
-		int *tmpPtr = (int *)buffer;
-
 		if(mAskNum == 0 && !mSpecial)
 			mTotalTimes++;
 
-		*tmpPtr = MSG_SEG_ASK;
-		tmpPtr++;
-		*tmpPtr = mClientNum;
-		tmpPtr++;
 		*tmpPtr = mFileId;
 		tmpPtr++;
 		*tmpPtr = mSegId;
@@ -1113,8 +935,6 @@ void MyClient::DealWithMessage(char *buf,int length){
 		int toClientNum = *ptr;
 		ptr++;
 		int oper = *ptr;
-//		ptr++;
-//		int segId = *ptr;
 		list<ClientReqBlock>::iterator tmpIter = mReqList.begin();
 		while(oper == OPER_WRITE && tmpIter != mReqList.end()){
 			if(tmpIter->clientNum == toClientNum && tmpIter->preOper == OPER_WRITE){
@@ -1132,10 +952,7 @@ void MyClient::DealWithMessage(char *buf,int length){
 					if(mCurReqBlock == tmpIter){
 						GetNextBlock();
 						isNativeProduce = true;
-//						mCurReqBlock++;
-//						if(mCurReqBlock == mReqList.end())
 					}
-//					mLinkedNums--;
 					mReqList.erase(tmpIter);
 					break;
 				}
@@ -1153,10 +970,6 @@ void MyClient::DealWithMessage(char *buf,int length){
 		}
 
 		if(mCurReqBlock != mReqList.end()){
-//			LOG_WRITE("");
-//			LOG_WRITE("client " << mClientNum << " req from " << mCurReqBlock->clientNum <<
-//					" left size:" << mCurReqBlock->leftSize << " operate:" << mCurReqBlock->preOper <<
-//					" localfin:" << mCurReqBlock->localfin);
 			if(mCurReqBlock->oper == OPER_WAIT && mCurReqBlock->preOper == OPER_READ){
 				mCurReqBlock->leftSize -= mPerSendSize;
 				int *tmpPtr;
@@ -1172,58 +985,6 @@ void MyClient::DealWithMessage(char *buf,int length){
 				sendLength = send(mClientInfo[mCurReqBlock->clientNum].recvFd,buffer,20,0);
 
 				if(mCurReqBlock->leftSize <= 0){
-//					int ofileId = -1;
-//					int osegId = -1;
-//					if(mSpecial){
-//						if(mDload1 != -1)
-//							mDload2 = mDload1;
-//						mDload1 = mCurReqBlock->segId;
-//					}
-//					else{
-//						mDbuffer->Write(mCurReqBlock->fileId,mCurReqBlock->segId,ofileId,osegId);
-//					}
-//
-//					//原播放的地方
-////					mIsReadFin = true;
-////					if(!mIsPlaying){
-//////						char nullChar = '\0';
-////						send(mPlaySockFd[1],buffer,20,0);
-////						mIsPlaying = true;
-////						//LOG_WRITE("client " << mClientNum << " will play now segId:" << mCurReqBlock->segId << "," << "mSegId:" << mSegId);
-////					}
-//
-//					if(ofileId != -1){
-//						char delbuffer[20];
-//						tmpPtr = (int *)delbuffer;
-//						*tmpPtr = MSG_DELETE_SEG;
-//						tmpPtr++;
-//						*tmpPtr = mClientNum;
-//						tmpPtr++;
-//						*tmpPtr = ofileId;
-//						tmpPtr++;
-//						*tmpPtr = osegId;
-//						LOG_WRITE("");
-//						LOG_WRITE("client " << mClientNum << " send MSG_DELETE_SEG fileId:" << ofileId <<
-//								",segId" << osegId);
-//						send(mClientInfo[0].recvFd,delbuffer,20,0);
-//					}
-//					if(!mSpecial){
-//						char addbuffer[20];
-//						tmpPtr = (int *)addbuffer;
-//						*tmpPtr = MSG_ADD_SEG;
-//						tmpPtr++;
-//						*tmpPtr = mClientNum;
-//						tmpPtr++;
-//						*tmpPtr = mCurReqBlock->fileId;
-//						tmpPtr++;
-//						*tmpPtr = mCurReqBlock->segId;
-//						tmpPtr++;
-//						*tmpPtr = mReqList.size() - 1;//mLinkedNums;
-//						LOG_WRITE("");
-//						LOG_WRITE("client " << mClientNum << " send MSG_ADD_SEG fileId:" << mCurReqBlock->fileId <<
-//								",segId" << mCurReqBlock->segId);
-//						send(mClientInfo[0].recvFd,addbuffer,20,0);
-//					}
 					list<ClientReqBlock>::iterator reqIter = mCurReqBlock;
 					mCurReqBlock++;
 					mReqList.erase(reqIter);
@@ -1299,13 +1060,6 @@ void MyClient::DealWithMessage(char *buf,int length){
 					iter->oper = iter->preOper;
 					isFound = true;
 				}
-
-				//				if(iter->leftSize == mBlockSize * 1000){
-//				LOG_WRITE("");
-//				LOG_WRITE("client " << mClientNum << " receive MSG_REMOTE_FAKE_FIN from " <<
-//						iter->clientNum << ",leftSize:" << iter->leftSize << ",oper:" << iter->preOper <<
-//						",localfin:" << iter->localfin);
-				//				}
 
 				break;
 			}

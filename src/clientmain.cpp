@@ -13,7 +13,7 @@ int main()
 	ParseConfigFile(config_file_name, config_info);
 	int clientnum = atoi(config_info["clientnum"].c_str());
 	for (int i = 0; i < clientnum; ++i) {
-		Client *client = new Client();
+		Client *client = new Client(i);
 		if (client->Init(config_info))
 			client->Run();
 		else {

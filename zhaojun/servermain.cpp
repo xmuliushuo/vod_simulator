@@ -21,21 +21,11 @@ MyTimer globalTimer(1);
 
 timeval globalStartTime;
 double globalModify;
-
-//MyServer(double bandWidth,int blockSize,int perSendSize,bool isP2POpen,
-//		int fileNum,int maxLength,int minLength,double bitRate)
-
-//MyClientManage(int serverFd,int perSendSize,int blockSize,
-//			int blockNums,double bandWidth,int fileNum,double thelta,double lambda,
-//			double zeta,double sigma,int playToPlay,int playToPause,int playToForward,
-//			int playToBackward,int playToStop);
-
 int main(){
 	srand((unsigned int)time(NULL));
 	gettimeofday(&globalStartTime,NULL);
 
 	MyServer *server;
-//	MyClientManage *clientManage;
 
 	double serverBand,clientBand;
 	int blockSize,perSendSize;
@@ -46,7 +36,6 @@ int main(){
 	int serverFd;
 	int blockNums;
 	int thelta,lambda,zeta,sigma;
-	int playToPlay,playToPause,playToForward,playToBackward,playToStop;
 	int clientNums;
 	int devNums;
 	char *clusterAddress[MAX_DEV_NUM];
@@ -78,11 +67,6 @@ int main(){
 	lambda = atoi(keyMap["Lambda"].c_str());
 	zeta = atoi(keyMap["Zeta"].c_str());
 	sigma = atoi(keyMap["Sigma"].c_str());
-	playToPlay = atoi(keyMap["PlayToPlay"].c_str());
-	playToPause = atoi(keyMap["PlayToPause"].c_str());
-	playToForward = atoi(keyMap["PlayToForward"].c_str());
-	playToBackward = atoi(keyMap["PlayToBackward"].c_str());
-	playToStop = atoi(keyMap["PlayToStop"].c_str());
 	clientNums = atoi(keyMap["ClientNums"].c_str());
 	devNums = atoi(keyMap["DevNums"].c_str());
 	serverPort = atoi(keyMap["ServerPort"].c_str());
@@ -92,7 +76,6 @@ int main(){
 
 	isUseRealDevice = !strcmp(keyMap["IsUseRealDevice"].c_str(),"true") ? true : false;
 
-	int multiple = atoi(keyMap["Multiple"].c_str());
 	globalTimer.setMultiple(multiple);
 
 	stringstream sstring;
@@ -107,21 +90,10 @@ int main(){
 			minBitRate,maxBitRate,serverPort,clientPort,devNums,clientNums,clusterAddress,sampleFre,isUseRealDevice,
 			period,lrfulambda,bufferStrategy,blockNums);
 
-//	clientManage = new MyClientManage(serverFd,perSendSize,blockSize,blockNums,clientBand,fileNum,thelta,lambda,
-//			zeta,sigma,playToPlay,playToPause,playToForward,playToBackward,playToStop,clientNums);
-//
-//	cout << "create clients" << endl;
-//	clientManage->CreateClient();
-
-//	sleep(10);
-
 	pthread_join(server->GetTid(),NULL);
 
 	keyMap.clear();
 	delete server;
-//	delete clientManage;
-
-//	exit(0);
 
 	return 0;
 }

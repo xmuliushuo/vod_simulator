@@ -7,11 +7,13 @@ SERVER=src/dbufferdw.o\
 	src/dbufferfifo.o\
 	src/server.o\
 	src/servermain.o\
-	src/utils.o
+	src/utils.o\
+	src/timer.o
 
 CLIENT=src/clientmain.o\
 	src/utils.o\
-	src/client.o
+	src/client.o\
+	src/timer.o
 
 CC = g++
 all:server client

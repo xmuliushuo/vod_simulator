@@ -27,15 +27,6 @@ MyTimer globalTimer(1);
 
 timeval globalStartTime;
 double globalModify;
-//bool globalReadList = false;
-
-//MyServer(double bandWidth,int blockSize,int perSendSize,bool isP2POpen,
-//		int fileNum,int maxLength,int minLength,double bitRate)
-
-//MyClientManage(int serverFd,int perSendSize,int blockSize,
-//			int blockNums,double bandWidth,int fileNum,double thelta,double lambda,
-//			double zeta,double sigma,int playToPlay,int playToPause,int playToForward,
-//			int playToBackward,int playToStop);
 
 int main(){
 	srand((unsigned int)time(NULL));
@@ -121,9 +112,6 @@ int main(){
 		clusterAddress[i] = const_cast<char *>(keyMap[keyName.c_str()].c_str());
 	}
 
-//	server = new MyServer(serverBand,blockSize,perSendSize,isP2POpen,fileNum,maxLength,minLength,
-//			bitRate,serverPort,clientPort,devNums,clientNums,clusterAddress);
-
 	clientManage = new MyClientManage(serverAddress,perSendSize,blockSize,blockNums,clientBand,fileNum,thelta,lambda,
 			zeta,sigma,playToPlay,playToPause,playToForward,playToBackward,playToStop,clientNums,clusterAddress,
 			serverPort,clientPort,devNums,clusterNum,isStartTogether,bufferStrategy,
@@ -137,8 +125,6 @@ int main(){
 
 	keyMap.clear();
 	delete clientManage;
-
-//	exit(0);
 
 	return 0;
 }

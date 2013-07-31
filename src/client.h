@@ -8,11 +8,12 @@ using namespace std;
 
 class Client {
 public:
-	Client();
+	Client(int);
 	~Client();
 	bool Init(map<string, string> &);
 	void Run();
 private:
+	int m_id;
 	bool m_p2p;
 	int m_server_port;
 	string m_serverip;

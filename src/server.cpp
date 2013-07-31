@@ -96,6 +96,7 @@ void Server::ThreadPerClient(int connfd)
 			resptr[1] = 0;
 			length = send(connfd, response, MESSAGELEN, 0);
 			assert(length == MESSAGELEN);
+			break;
 		}
 	}
 }

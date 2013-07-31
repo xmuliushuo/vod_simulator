@@ -15,7 +15,6 @@ using namespace std;
 #define MSG_REMOTE_FAKE_FIN		5
 #define MSG_BAD_REQ				6
 #define MSG_REDIRECT			7
-#define MSG_SEG_ASK				8
 #define MSG_SEG_ACK				9
 #define MSG_CLIENT_LEAVE		11
 #define MSG_CONNECT_FIN		12
