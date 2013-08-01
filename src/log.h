@@ -16,7 +16,6 @@ using namespace std;
 #endif
 
 extern timeval globalStartTime;
-extern MyTimer globalTimer;
 
 #define LOG(level,msg) \
 		{ \
@@ -24,7 +23,7 @@ extern MyTimer globalTimer;
 	gettimeofday(&localEndTime,NULL); \
 	if(level == 1) \
 	cout << "At:" << (((localEndTime.tv_sec - globalStartTime.tv_sec) + \
-			(localEndTime.tv_usec - globalStartTime.tv_usec) / 1000000.0) / globalTimer.getMultiple()) \
+			(localEndTime.tv_usec - globalStartTime.tv_usec) / 1000000.0)) \
 			<< " " << msg << endl; \
 			else if(level == 2) \
 			cerr << msg << endl; \
@@ -37,7 +36,7 @@ extern MyTimer globalTimer;
 	timeval localEndTime; \
 	gettimeofday(&localEndTime,NULL); \
 	ofs << "At:" << (((localEndTime.tv_sec - globalStartTime.tv_sec) + \
-			(localEndTime.tv_usec - globalStartTime.tv_usec) / 1000000.0) / globalTimer.getMultiple()) \
+			(localEndTime.tv_usec - globalStartTime.tv_usec) / 1000000.0)) \
 			<< " " << msg << endl; \
 		}
 
@@ -46,7 +45,7 @@ extern MyTimer globalTimer;
 	timeval localEndTime; \
 	gettimeofday(&localEndTime,NULL); \
 	ofs << (((localEndTime.tv_sec - globalStartTime.tv_sec) + \
-			(localEndTime.tv_usec - globalStartTime.tv_usec) / 1000000.0) / globalTimer.getMultiple()) \
+			(localEndTime.tv_usec - globalStartTime.tv_usec) / 1000000.0)) \
 			<< " " << msg << endl; \
 		}
 
