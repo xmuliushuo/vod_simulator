@@ -96,39 +96,6 @@ MyServer::MyServer(double bandWidth,int blockSize,int perSendSize,bool isP2POpen
 	else if(strcmp(mBufferStrategy,"LFRU") == 0){
 		mDbuffer = new DBufferLFRU(mBlockSize,mBlockNum,mPeriod);
 	}
-	else if(strcmp(mBufferStrategy,"LFU") == 0){
-		mDbuffer = new DBufferLFU(mBlockSize,mBlockNum);
-	}
-	else if(strcmp(mBufferStrategy,"LRFU") == 0){
-		mDbuffer = new DBufferLRFU(mBlockSize,mBlockNum,mLrfuLambda);
-	}
-	else if(strcmp(mBufferStrategy,"FIFO") == 0){
-		mDbuffer = new DBufferFIFO(mBlockSize,mBlockNum);
-	}
-	else if(strcmp(mBufferStrategy, "DWS") == 0) {
-		mDbuffer = new DBufferDWS(mBlockSize, mBlockNum, mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"FIFOS") == 0){
-		mDbuffer = new DBufferFIFOS(mBlockSize,mBlockNum);
-	}
-	else if(strcmp(mBufferStrategy,"LRUS") == 0){
-		mDbuffer = new DBufferLRUS(mBlockSize,mBlockNum);
-	}
-	else if(strcmp(mBufferStrategy,"LFUS") == 0){
-		mDbuffer = new DBufferLFUS(mBlockSize,mBlockNum);
-	}
-	else if (strcmp(mBufferStrategy,"DWSH") == 0){
-		mDbuffer = new DBufferDWSH(mBlockSize, mBlockNum, mPeriod);
-	}
-	else if(strcmp(mBufferStrategy, "DWQ") == 0) {
-		mDbuffer = new DBufferDWQ(mBlockSize, mBlockNum, mPeriod);
-	}
-	else if(strcmp(mBufferStrategy, "DWK") == 0) {
-		mDbuffer = new DBufferDWK(mBlockSize, mBlockNum, mPeriod);
-	}
-	else if(strcmp(mBufferStrategy, "DWKS") == 0) {
-		mDbuffer = new DBufferDWKS(mBlockSize, mBlockNum, mPeriod);
-	}
 	LOG_INFO("");
 	LOG_INFO("Server Config");
 	LOG_INFO("BandWidth = " << mBand);
@@ -166,7 +133,6 @@ MyServer::~MyServer(){
 	mCurReqBlock = mReqList.end();
 	for(int i = 0;i <= MAX_CLIENT_NUM;i++){
 		if(mClientInfo[i].recvFd != -1){
-//			close(mClientInfo[i].listenFd);
 			close(mClientInfo[i].recvFd);
 		}
 	}
@@ -181,13 +147,9 @@ MyServer::~MyServer(){
 	for(int i = 1;i < mClientNums;i++){
 		mClientDelayOfs[i].close();
 	}
-
-//	close(mListenSockFd[0]);
-//	close(mListenSockFd[1]);
 }
 
 void MyServer::Init(){
-	mEpollFd = epoll_create(MAX_LISTEN_NUM);
 	mREpollFd = epoll_create(MAX_LISTEN_NUM);
 	epoll_event ev;
 
@@ -251,14 +213,6 @@ void MyServer::Init(){
 	}
 	LOG_INFO("after");
 }
-
-//int MyServer::JudgeCluster(char *address){
-//	for(int i = 0;i < mDevNums;i++){
-//		if(strcmp(address,mClusterAddress[i]) == 0)
-//			return i;
-//	}
-//	return -1;
-//}
 
 void MyServer::BufferReset(){
 	TimerEvent timeEvent;

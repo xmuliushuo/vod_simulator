@@ -28,6 +28,8 @@ private:
 	int m_port;
 	int m_block_size;
 	int m_block_num;
+	int m_event_fd;
+	int m_buffer_reset_fd[2];
 	string m_buffer_strategy;
 };
 

@@ -70,8 +70,6 @@ private:
 	int mDevNums;
 	int mClientNums;
 
-//	int mCurTranFd;
-	int mEpollFd;
 	DataServer *mDataServer;
 	double mBand;
 	FakeTran mFakeTran;
@@ -119,10 +117,6 @@ private:
 	int mReadFromServer; // 没有找到P2P，直接从服务器读取的请求个数
 	int mMissTimes; // 未命中次数
 	//end by mjq @2013.6.8
-
-//	FileBlock mFileBlock[MAX_FILE_NUM + 1];
-
-//	int mClientLinks[MAX_CLIENT_NUM + 1];
 };
 
 

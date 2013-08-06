@@ -56,8 +56,6 @@ enum HMMSTATUS{
 	PAUSE
 };
 
-#define MAX_LISTEN_NUM	1000
-
 struct ClientInfoBlock{
 //	int listenFd;//被动
 	int recvFd;//被动

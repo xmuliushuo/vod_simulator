@@ -21,7 +21,6 @@ void *ThreadPerClient_(void *arg)
 
 Server::Server()
 {
-
 }
 
 Server::~Server()
@@ -31,6 +30,8 @@ Server::~Server()
 
 bool Server::Init(map<string, string> &config)
 {
+	m_event_fd = epoll_create(MAX_LISTEN_NUM);
+	
 	if (config.find("p2p") == config.end()) return false;
 	if (config.find("serverport") == config.end()) return false;
 	if (config.find("blocksize") == config.end()) return false;
