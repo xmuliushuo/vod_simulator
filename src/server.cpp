@@ -2,6 +2,7 @@
 
 #include <pthread.h>
 #include <sys/socket.h>
+#include <sys/epoll.h>
 
 #include <cstdlib>
 #include <cstring>
@@ -9,6 +10,10 @@
 
 #include "utils.h"
 #include "message.h"
+#include "timer.h"
+#include "dbuffer.h"
+#include "dbufferdw.h"
+#include "dbufferfifo.h"
 
 void *ThreadPerClient_(void *arg)
 {
@@ -16,6 +21,13 @@ void *ThreadPerClient_(void *arg)
 	struct RequestArgs *ptr = (struct RequestArgs *)arg;
 	ptr->server->ThreadPerClient(ptr->connfd);
 	free(ptr);
+	return (void *)NULL;
+}
+
+void *ThreadEvent_(void *arg)
+{
+	Pthread_detach(pthread_self());
+	((Server *)arg)->ThreadEvent();
 	return (void *)NULL;
 }
 
@@ -31,20 +43,31 @@ Server::~Server()
 bool Server::Init(map<string, string> &config)
 {
 	m_event_fd = epoll_create(MAX_LISTEN_NUM);
+	epoll_event ev;
 	
 	if (config.find("p2p") == config.end()) return false;
 	if (config.find("serverport") == config.end()) return false;
 	if (config.find("blocksize") == config.end()) return false;
 	if (config.find("blocknum") == config.end()) return false;
 	if (config.find("serverstrategy") == config.end()) return false;
+	if (config.find("period") == config.end()) return false;
 
 	m_p2p = static_cast<bool>(atoi(config["p2p"].c_str()));
 	m_port = atoi(config["serverport"].c_str());
 	m_block_size = atoi(config["blocksize"].c_str());
 	m_block_num = atoi(config["blocknum"].c_str());
-	// if (config["serverstrategy"] == "fifo")
-	// 	buffer_ = new DbufferFIFO();
-	// else assert(0);
+	m_period = atoi(config["period"].c_str());
+	string debug = config["serverstrategy"];
+	if (config["serverstrategy"] == "fifo")
+		m_buffer = new DBufferFIFO(m_block_size, m_block_num);
+	else if (config["serverstrategy"] == "dw")
+		m_buffer = new DBufferDW(m_block_size, m_block_num, m_period);
+	else assert(0);
+
+	socketpair(AF_UNIX, SOCK_STREAM, 0, m_buffer_reset_fd);
+	ev.data.fd = m_buffer_reset_fd[0];
+	ev.events = EPOLLIN;
+	epoll_ctl(m_event_fd, EPOLL_CTL_ADD, m_buffer_reset_fd[0], &ev);
 	return true;
 }
 
@@ -55,6 +78,15 @@ void Server::Run()
 	pthread_t tid;
 	struct sockaddr_in serveraddr;
 	socklen_t clilen;
+	TimerEvent timer_event;
+
+	Pthread_create(&tid, NULL, ThreadEvent_, this);
+
+	if(m_buffer->IsBlockReset()) {
+		timer_event.sockfd = m_buffer_reset_fd[1];
+		timer_event.left_time = m_period * 1000000;
+		Timer::GetTimer()->RegisterTimer(timer_event);
+	}
 
 	bzero(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
@@ -100,4 +132,36 @@ void Server::ThreadPerClient(int connfd)
 			break;
 		}
 	}
+}
+
+void Server::ThreadEvent()
+{
+	epoll_event events[MAX_LISTEN_NUM];
+	int nfds;
+	int i;
+	char buffer[20];
+	int length;
+	while(true) {
+		nfds = epoll_wait(m_event_fd, events, MAX_LISTEN_NUM, -1);
+		for(i = 0; i < nfds; ++i) {
+			if (events[i].data.fd == m_buffer_reset_fd[0]) {
+				length = recv(events[i].data.fd, buffer, 20, 0);
+				assert(length == 20);
+				BufferReset();
+			}
+			else {
+				assert(0);
+			}
+		}
+	}
+}
+
+void Server::BufferReset() 
+{
+	cout << "buffer reset" << endl;
+	TimerEvent event;
+	event.sockfd = m_buffer_reset_fd[1];
+	event.left_time = m_period * 1000000;
+	Timer::GetTimer()->RegisterTimer(event);
+	m_buffer->BlockReset();
 }

@@ -29,12 +29,10 @@ int main(){
 
 	double serverBand,clientBand;
 	int blockSize,perSendSize;
-	bool isP2POpen;
 	int fileNum;
 	int maxLength,minLength;
 	double minBitRate,maxBitRate;
 	int serverFd;
-	int blockNums;
 	int thelta,lambda,zeta,sigma;
 	int clientNums;
 	int devNums;
@@ -43,24 +41,19 @@ int main(){
 	int clientPort;
 	int sampleFre;
 
-	char *bufferStrategy;
-	int period;
 	int lrfulambda;
 
 	bool isUseRealDevice;
 
 	serverBand = atof(keyMap["ServerBand"].c_str());
 	clientBand = atof(keyMap["ClientBand"].c_str());
-	blockSize = atoi(keyMap["BlockSize"].c_str());
 	perSendSize = atoi(keyMap["PerSendSize"].c_str());
 	fileNum = atoi(keyMap["SourceNums"].c_str());
 	maxLength = atoi(keyMap["MaxLength"].c_str());
 	minLength = atoi(keyMap["MinLength"].c_str());
 	minBitRate = atof(keyMap["MinBitRate"].c_str());
 	maxBitRate = atof(keyMap["MaxBitRate"].c_str());
-	blockNums = atoi(keyMap["SBlockNums"].c_str());
 
-	period = atoi(keyMap["Period"].c_str());
 	lrfulambda = atoi(keyMap["LrfuLambda"].c_str());
 
 	thelta = atoi(keyMap["Thelta"].c_str());
@@ -75,8 +68,6 @@ int main(){
 	globalModify = atof(keyMap["Modify"].c_str());
 
 	isUseRealDevice = !strcmp(keyMap["IsUseRealDevice"].c_str(),"true") ? true : false;
-
-	globalTimer.setMultiple(multiple);
 
 	stringstream sstring;
 	for(int i = 0;i < devNums;i++){

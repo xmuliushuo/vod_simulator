@@ -9,6 +9,7 @@
 using namespace std;
 
 class Server;
+class DBuffer;
 
 struct RequestArgs{
 	Server *server;     /**< 指向Server */
@@ -23,13 +24,17 @@ public:
 	bool Init(map<string, string> &);
 	void Run();
 	void ThreadPerClient(int connfd);
+	void ThreadEvent();
 private:
+	void BufferReset();
 	bool m_p2p;
 	int m_port;
 	int m_block_size;
 	int m_block_num;
 	int m_event_fd;
 	int m_buffer_reset_fd[2];
+	int m_period;
+	DBuffer *m_buffer;
 	string m_buffer_strategy;
 };
 

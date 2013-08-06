@@ -7,10 +7,20 @@
 
 #include "utils.h"
 
+Timer *Timer::m_timer = NULL;
+
 static void* _TimerThread(void *arg)
 {
 	((Timer *)arg)->TimerThread();
 	return NULL;
+}
+
+Timer *Timer::GetTimer()
+{
+	if (m_timer == NULL) {
+		m_timer = new Timer();
+	}
+	return m_timer;
 }
 
 Timer::Timer()

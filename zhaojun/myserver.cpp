@@ -35,7 +35,6 @@ MyServer::MyServer(double bandWidth,int blockSize,int perSendSize,bool isP2POpen
 	mBand = bandWidth;
 	mPerSendSize = perSendSize;
 
-	mPeriod = period;
 	mLrfuLambda = lrfuLambda;
 
 	mMaxBandSize = (mBand / 8.0) * 1000 * 4;
@@ -84,32 +83,7 @@ MyServer::MyServer(double bandWidth,int blockSize,int perSendSize,bool isP2POpen
 
 	mBufferStrategy = bufferStrategy;
 
-	if(strcmp(mBufferStrategy,"LRU") == 0){
-		mDbuffer = new DBufferLRU(mBlockSize,mBlockNum);
-	}
-	else if(strcmp(mBufferStrategy,"DW") == 0){
-		mDbuffer = new DBufferDW(mBlockSize,mBlockNum,mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"PLFU") == 0){
-		mDbuffer = new DBufferPLFU(mBlockSize,mBlockNum,mPeriod);
-	}
-	else if(strcmp(mBufferStrategy,"LFRU") == 0){
-		mDbuffer = new DBufferLFRU(mBlockSize,mBlockNum,mPeriod);
-	}
 	LOG_INFO("");
-	LOG_INFO("Server Config");
-	LOG_INFO("BandWidth = " << mBand);
-	LOG_INFO("BlockSize = " << mBlockSize);
-	LOG_INFO("PerSendSize = " << mPerSendSize);
-	LOG_INFO("IsP2POpen = " << (mIsP2POpen ? "true" : "false"));
-	LOG_INFO("FileNums = " << mFileNum);
-	LOG_INFO("MinLength = " << mMinLength);
-	LOG_INFO("MaxLength = " << mMaxLength);
-	LOG_INFO("MinBitRate = " << mMinBitRate);
-	LOG_INFO("MaxBitRate = " << mMaxBitRate);
-	LOG_INFO("ServerPort = " << mServerPort);
-	LOG_INFO("DevNums = " << mDevNums);
-	LOG_INFO("BlockNum = "<< mBlockNum);
 	LOG_INFO("Buffer strategy = "<<mBufferStrategy);
 	LOG_INFO("Period = "<<mPeriod);
 	LOG_INFO("LrfuLambda ="<< mLrfuLambda);
@@ -151,15 +125,12 @@ MyServer::~MyServer(){
 
 void MyServer::Init(){
 	mREpollFd = epoll_create(MAX_LISTEN_NUM);
-	epoll_event ev;
 
 	mNetSockFd = socket(AF_INET,SOCK_STREAM,0);
 
 	socketpair(AF_UNIX,SOCK_STREAM,0,mTakeSample);
 
 	socketpair(AF_UNIX,SOCK_STREAM,0,mReadDevice);
-	socketpair(AF_UNIX,SOCK_STREAM,0,mBufferResetFd);
-
 	ev.data.fd = mReadDevice[0];
 	ev.events = EPOLLIN;
 	epoll_ctl(mREpollFd,EPOLL_CTL_ADD,mReadDevice[0],&ev);
@@ -179,10 +150,6 @@ void MyServer::Init(){
 	ev.data.fd = mFakeTran.GetFd();
 	ev.events = EPOLLIN;
 	epoll_ctl(mEpollFd,EPOLL_CTL_ADD,mFakeTran.GetFd(),&ev);
-
-	ev.data.fd = mBufferResetFd[0];
-	ev.events = EPOLLIN;
-	epoll_ctl(mEpollFd,EPOLL_CTL_ADD,mBufferResetFd[0],&ev);
 
 	struct sockaddr_in serverAddr;
 	bzero(&serverAddr,sizeof(serverAddr));
@@ -214,19 +181,8 @@ void MyServer::Init(){
 	LOG_INFO("after");
 }
 
-void MyServer::BufferReset(){
-	TimerEvent timeEvent;
-	timeEvent.isNew = true;
-	timeEvent.sockfd = mBufferResetFd[1];
-	timeEvent.leftTime = mPeriod * 1000000;
-	globalTimer.RegisterTimer(timeEvent);
-	mDbuffer->BlockReset();
-}
-
 void MyServer::ReadFromDevice(){
-	epoll_event events[MAX_LISTEN_NUM];
 	while(true){
-		int nfds = epoll_wait(mREpollFd,events,MAX_LISTEN_NUM,-1);
 		for(int i = 0;i < nfds;i++){
 			if(events[i].data.fd == mReadDevice[0]){
 				char buffer[20];
@@ -305,8 +261,6 @@ void MyServer::ReadFromDevice(){
 }
 
 void MyServer::TakeSample(){
-//	LOG_INFO("");
-//	LOG_INFO("server need to send " << mNeedSendBandSize);
 	LOG_DISK(mOFs,mNeedSendBandSize);
 	TimerEvent event;
 	event.isNew = true;
@@ -325,14 +279,6 @@ void MyServer::Run(){
 	globalTimer.RegisterTimer(timerEvent);
 
 	epoll_event events[MAX_LISTEN_NUM];
-	assert(mDbuffer!=NULL);
-	if(mDbuffer->IsBlockReset()){
-		timerEvent.isNew = true;
-		timerEvent.sockfd = mBufferResetFd[1];
-		timerEvent.leftTime = mPeriod * 1000000;
-		globalTimer.RegisterTimer(timerEvent);
-		//BufferReset();
-	}
 
 	while(true){
 		int fds = epoll_wait(mEpollFd,events,MAX_LISTEN_NUM,-1);
@@ -341,19 +287,12 @@ void MyServer::Run(){
 				if(events[i].data.fd == mFakeTran.GetFd()){
 					char buffer[20];
 					read(mFakeTran.GetFd(),buffer,20);
-//					int *ptr = (int *)buffer;
-//					*ptr = MSG_FAKE_FIN;
 					DealWithMessage(buffer,20);
 				}
 				else if(events[i].data.fd == mTakeSample[0]){
 					char buffer[20];
 					read(mTakeSample[0],buffer,20);
 					TakeSample();
-				}
-				else if(events[i].data.fd == mBufferResetFd[0]){
-					char buffer[20];
-					int length = recv(events[i].data.fd,buffer,20,0);
-					BufferReset();
 				}
 				else if(events[i].data.fd == mNetSockFd){
 					struct sockaddr_in clientAddr;
@@ -549,22 +488,6 @@ void MyServer::DealWithMessage(char *buf,int length){
 		LOG_INFO("");
 		LOG_INFO("server receive MSG_SEG_ASK from " << clientNum <<
 				" and start to search the device");
-
-		//否则提供
-//		char buffer[20];
-//		int *tmpPtr = (int *)buffer;
-//		*tmpPtr = MSG_SEG_ACK;
-//		tmpPtr++;
-//		*tmpPtr = 0;
-//		tmpPtr++;
-//		*tmpPtr = segNum;
-//		tmpPtr++;
-//		double *dbPtr = (double *)tmpPtr;
-//		*dbPtr = bitRate;
-//		send(mClientInfo[clientNum].recvFd,buffer,20,0);
-//		LOG_INFO("");
-//		LOG_INFO("server receive MSG_SEG_ASK from " << clientNum <<
-//				" and response MSG_SEG_ACK");
 		break;
 	}
 	case MSG_REQUEST_SEG:{
@@ -635,13 +558,6 @@ void MyServer::DealWithMessage(char *buf,int length){
 		LOG_INFO("server receive MSG_ADD_SEG from " << clientNum <<
 				" and add the fileId:" << fileId << ",segId:" << segId <<
 				" into database");
-//		list<ClientReqBlock>::iterator iter = SearchTheReqList(fileId,segId);
-//		if(iter != mReqList.end()){
-//			if(mCurReqBlock == iter)
-//				mCurReqBlock++;
-//			mReqList.erase(iter);
-//		}
-//		mClientLinks[clientNum]++;
 		mDataServer->InsertIntoIndex(fileId,segId,clientNum,linkedNum);
 		break;
 	}
@@ -651,10 +567,6 @@ void MyServer::DealWithMessage(char *buf,int length){
 		int oper = *ptr;
 
 		bool isNativeProduce = false;
-//		ptr++;
-//		int segId = *ptr;
-//		if(mCurReqBlock != mReqList.end())
-//			GetNextBlock();
 
 		list<ClientReqBlock>::iterator tmpIter = mReqList.begin();
 		while(oper == OPER_WRITE && tmpIter != mReqList.end()){
@@ -771,11 +683,6 @@ void MyServer::DealWithMessage(char *buf,int length){
 			*tmpPtr = mCurReqBlock->preOper == OPER_READ ? OPER_WRITE : OPER_READ;
 			send(mClientInfo[mCurReqBlock->clientNum].recvFd,buffer,20,0);
 
-//			LOG_INFO("");
-//			LOG_INFO("server send MSG_REMOTE_FAKE_FIN to " << mCurReqBlock->clientNum <<
-//					" leftsize:" << mCurReqBlock->leftSize << "," << mCurReqBlock->segId);
-
-//			GetNextBlock();
 		}
 
 		break;
@@ -800,12 +707,6 @@ void MyServer::DealWithMessage(char *buf,int length){
 					iter->localfin = REMOTE_FIN;
 					isFound = false;
 				}
-
-//				LOG_INFO("");
-//				LOG_INFO("server receive MSG_REMOTE_FAKE_FIN from " << clientNum <<
-//						" leftsize:" << iter->leftSize << "," << iter->segId << ",localfin" << iter->localfin);
-
-//				LOG_INFO("1");
 				if(iter->leftSize <= 0 && iter->localfin != REMOTE_FIN){
 					//					mReqList.erase(iter);
 					char buffer[20];

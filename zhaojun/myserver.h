@@ -13,25 +13,7 @@
 #include "faketran.h"
 #include "mymessage.h"
 
-#include "dbuffer.h"
-#include "dbufferlru.h"
-#include "dbufferdw.h"
-#include "dbufferlfru.h"
-#include "dbufferlfu.h"
-#include "dbufferplfu.h"
-#include "dbufferlrfu.h"
-#include "dbufferfifo.h"
-#include "dbufferdws.h"
-#include "dbufferlrus.h"
-#include "dbufferfifos.h"
-#include "dbufferlfus.h"
-#include "dbufferdwsh.h"
-#include "dbufferdwq.h"
-#include "dbufferdwk.h"
-#include "dbufferdwks.h"
-
 #include <sys/socket.h>
-#include <sys/epoll.h>
 #include <list>
 #include <fstream>
 
@@ -51,9 +33,6 @@ public:
 	list<ClientReqBlock>::iterator SearchTheReqList(int fileId,int segId);
 	void ReadFromDevice();
 	void BufferReset();
-//	int GetListenSockFd(){return mListenSockFd[1];}
-
-//	int JudgeCluster(char *address);
 private:
 //	int mListenSockFd[2];//AF_UNIX协议，1号对外公布，0号用于epoll循环
 	int mReadDevice[2];
@@ -102,12 +81,8 @@ private:
 
 	bool mIsUseRealDevice;
 
-	int mBufferResetFd[2];
-	DBuffer *mDbuffer;
-	int mPeriod;
 	double mLrfuLambda;
 	char *mBufferStrategy;
-	int mBlockNum;
 	map<unsigned int, bool> mConnectStatus;
 
 	//add by mjq @2013.6.8
