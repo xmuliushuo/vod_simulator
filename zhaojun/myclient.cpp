@@ -10,12 +10,6 @@
 
 #include "log.h"
 
-void *ThreadToClient(void *arg){
-	MyClient *client = (MyClient *)arg;
-	client->Run();
-	return NULL;
-}
-
 MyClient::MyClient(ModelAssemble *model,int blockSize,int perSendSize,
 		double bandWidth,int blockNums,int clientNum,int serverPort,int clientPort,int devNums,
 		int clientNums,char **clusterAddress,char *serverAddress,char *bufferStrategy,
@@ -25,17 +19,14 @@ MyClient::MyClient(ModelAssemble *model,int blockSize,int perSendSize,
 	mModel = model;
 	mOldFileId = -1;
 	mOldSegId = -1;
-	mBlockSize = blockSize;
 	mPerSendSize = perSendSize;
 	mBand = bandWidth;
-	mBlockNum = blockNums;
 	mClientNum = clientNum;
 
 	mPreFetch = preFetch;
 
 	mBufferStrategy = bufferStrategy;
 
-	mPeriod = period;
 	mLrfuLambda = lrfuLambda;
 
 	mIsRepeat = isRepeat;
@@ -61,19 +52,6 @@ MyClient::MyClient(ModelAssemble *model,int blockSize,int perSendSize,
 
 	mSpecial = special;
 	mIsFirstStart = true;
-
-	if(strcmp(mBufferStrategy,"LRU") == 0){
-		mDbuffer = new DBufferLRU(blockSize,mBlockNum);
-	}
-	else if(strcmp(mBufferStrategy,"LRUT") == 0){
-		mDbuffer = new DBufferLRUT(blockSize,mBlockNum,mClientNum);
-	}
-	else if(strcmp(mBufferStrategy,"LFUT") == 0){
-		mDbuffer = new DBufferLFUT(blockSize,mBlockNum,mClientNum);
-	}
-	else {
-		assert(0);
-	}
 
 	mReqList.clear();
 
@@ -118,14 +96,11 @@ MyClient::MyClient(ModelAssemble *model,int blockSize,int perSendSize,
 
 MyClient::~MyClient(){
 	mReqList.clear();
-	delete mDbuffer;
 	mModel = NULL;
 	mCurReqBlock = mReqList.end();
 	for(int i = 0;i <= MAX_CLIENT_NUM;i++){
 		if(mClientInfo[i].recvFd != -1){
-//			close(mClientInfo[i].listenFd);
 			close(mClientInfo[i].recvFd);
-//			mClientInfo[i].listenFd = -1;
 			mClientInfo[i].recvFd = -1;
 		}
 	}
@@ -134,12 +109,9 @@ MyClient::~MyClient(){
 	mRecordFs.close();
 	close(mNetSockFd);
 	close(mEpollFd);
-//	mOFs.close();
 }
 
 void MyClient::Init(){
-	mEpollFd = epoll_create(MAX_LISTEN_NUM);
-	epoll_event ev;
 
 	mNetSockFd = socket(AF_INET,SOCK_STREAM,0);
 	struct sockaddr_in clientAddress;
@@ -173,28 +145,6 @@ void MyClient::Init(){
 	ev.data.fd = mPlaySockFd[0];
 	ev.events = EPOLLIN;
 	epoll_ctl(mEpollFd,EPOLL_CTL_ADD,mPlaySockFd[0],&ev);
-	
-	socketpair(AF_UNIX,SOCK_STREAM,0,mBufferResetFd);
-	ev.data.fd = mBufferResetFd[0];
-	ev.events = EPOLLIN;
-	epoll_ctl(mEpollFd,EPOLL_CTL_ADD,mBufferResetFd[0],&ev);
-}
-
-//int MyClient::JudgeCluster(char *address){
-//	for(int i = 0;i < mDevNums;i++){
-//		if(strcmp(address,mClusterAddress[i]) == 0)
-//			return i;
-//	}
-//	return -1;
-//}
-
-void MyClient::BufferReset(){
-	TimerEvent timeEvent;
-	timeEvent.isNew = true;
-	timeEvent.sockfd = mBufferResetFd[1];
-	timeEvent.leftTime = mPeriod * 1000000;
-	globalTimer.RegisterTimer(timeEvent);
-	mDbuffer->BlockReset();
 }
 
 void MyClient::Run(){
@@ -216,7 +166,6 @@ void MyClient::Run(){
 		}
 	}
 
-//	LOG_WRITE("client " << mClientNum << " before");
 	if(mIsRepeat && readOrWrite){
 		iofs >> mFileId;
 		iofs >> mSegId;
@@ -237,10 +186,6 @@ void MyClient::Run(){
 	if(mIsStartTogether)
 		timeEvent.leftTime = 0;
 
-	cout << mFileId << " is client " << mClientNum << " request file" << endl;
-//	LOG_WRITE("client " << mClientNum << " before1");
-//	LOG_WRITE("client " << mClientNum << " before2");
-
 	timeEvent.isNew = true;
 	timeEvent.sockfd = mFakeTran.GetOtherFd();
 
@@ -251,8 +196,6 @@ void MyClient::Run(){
 	bool firstTime = true;
 	int toggleSwitch = 0;
 
-	epoll_event events[MAX_LISTEN_NUM];
-
 	int oldSegId = 0;
 	int readSegId = 1;
 
@@ -260,19 +203,8 @@ void MyClient::Run(){
 
 
 	while(true){
-		int fds = epoll_wait(mEpollFd,events,MAX_LISTEN_NUM,-1);
-
 		if(firstTime){
-			int connectFd;
-			char buffer[20];
 			read(events[0].data.fd,buffer,20);
-
-			struct sockaddr_in serverAddress;
-			bzero(&serverAddress,sizeof(serverAddress));
-			serverAddress.sin_addr.s_addr = inet_addr(mServerAddress);
-			serverAddress.sin_family = AF_INET;
-			serverAddress.sin_port = htons(mServerPort);
-			connectFd = socket(AF_INET,SOCK_STREAM,0);
 
 			mClientInfo[0].recvFd = connectFd;
 			mClientInfo[0].address.sin_addr = serverAddress.sin_addr;
@@ -281,28 +213,9 @@ void MyClient::Run(){
 			int flag = 1;
 			setsockopt(connectFd,IPPROTO_TCP,TCP_NODELAY,&flag,sizeof(flag));
 
-			if(connect(connectFd,(struct sockaddr *)&serverAddress,sizeof(struct sockaddr)) == -1){
-				LOG_WRITE("Client " << mClientNum << " Connect 0 Error!",mRecordFs);
-				exit(1);
-			}
-
-			epoll_event ev;
-			ev.data.fd = connectFd;
-			ev.events = EPOLLIN;
-			epoll_ctl(mEpollFd,EPOLL_CTL_ADD,connectFd,&ev);
-
 			int *tmpPtr = (int *)buffer;
 			*tmpPtr = mClientNum;
 			send(connectFd,buffer,20,0);
-
-			if(mDbuffer->IsBlockReset()){
-				timeEvent.isNew = true;
-				timeEvent.sockfd = mBufferResetFd[1];
-				timeEvent.leftTime = mPeriod * 1000000;
-				globalTimer.RegisterTimer(timeEvent);
-				LOG_WRITE("",mRecordFs);
-				LOG_WRITE("client " << mClientNum << " has blockreset reset period:" << mPeriod,mRecordFs);
-			}	
 
 			firstTime = false;
 
@@ -316,11 +229,6 @@ void MyClient::Run(){
 				mJumpSeg = 1;
 				LOG_WRITE("client " << mClientNum << " JumpSeg:" << mJumpSeg,mRecordFs);
 			}
-
-			LOG_WRITE("",mRecordFs);
-			LOG_WRITE("client " << mClientNum << " start to join the network request fileId:" <<
-					mFileId,mRecordFs);
-
 			continue;
 		}
 		
@@ -368,13 +276,6 @@ void MyClient::Run(){
 						ptr++;
 						*ptr = mClientNum;
 						send(mClientInfo[clientNum].recvFd,buffer,20,0);
-					}
-					else if(events[i].data.fd == mBufferResetFd[0]){
-						char buffer[20];
-						int length = recv(events[i].data.fd,buffer,20,0);
-						BufferReset();	
-						LOG_WRITE("",mRecordFs);
-						LOG_WRITE("client " << mClientNum << " reset buffer",mRecordFs);
 					}
 					else{
 						char buffer[20];

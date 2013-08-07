@@ -37,7 +37,7 @@ Server::Server()
 
 Server::~Server()
 {
-
+	delete m_buffer;
 }
 
 bool Server::Init(map<string, string> &config)
@@ -57,7 +57,6 @@ bool Server::Init(map<string, string> &config)
 	m_block_size = atoi(config["blocksize"].c_str());
 	m_block_num = atoi(config["blocknum"].c_str());
 	m_period = atoi(config["period"].c_str());
-	string debug = config["serverstrategy"];
 	if (config["serverstrategy"] == "fifo")
 		m_buffer = new DBufferFIFO(m_block_size, m_block_num);
 	else if (config["serverstrategy"] == "dw")

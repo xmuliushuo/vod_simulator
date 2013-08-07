@@ -13,17 +13,12 @@
 
 #include <string.h>
 
-#include <map>
-#include <string>
-
 #include <sstream>
 
 #include <stdio.h>
 #include <stdlib.h>
 
 using namespace std;
-
-MyTimer globalTimer(1);
 
 timeval globalStartTime;
 double globalModify;
@@ -39,7 +34,6 @@ int main(){
 
 	double serverBand,clientBand;
 	int blockSize,perSendSize;
-	bool isP2POpen;
 	int fileNum;
 	int maxLength,minLength;
 	double bitRate;
@@ -53,7 +47,6 @@ int main(){
 	int serverPort;
 	int clientPort;
 	int clusterNum;
-	char *serverAddress;
 	bool isStartTogether;
 	char *bufferStrategy;
 	int period;
@@ -89,8 +82,6 @@ int main(){
 	isStartTogether = !strcmp(keyMap["IsStartTogether"].c_str(),"true") ? true : false;
 
 	globalModify = atof(keyMap["Modify"].c_str());
-
-	serverAddress = const_cast<char *>(keyMap["ServerAddress"].c_str());
 
 	bufferStrategy = const_cast<char *>(keyMap["BufferStrategy"].c_str());
 
