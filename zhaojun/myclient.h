@@ -84,7 +84,6 @@ private:
 
 	int mPlaySockFd[2];
 
-//	int mServerFd;
 	int mEpollFd;
 
 	ModelAssemble *mModel;

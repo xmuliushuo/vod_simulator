@@ -10,10 +10,6 @@
 
 #define UNUSED(a) if(a){}
 
-
-void Trim(std::string &s);
-
-void ParseConfigFile(char *configFileName,std::map<std::string,std::string> &keyMap);
 int RandomI(int first,int second);
 double RandomF(int a,int b);
 long int getTimeInterval(struct timeval *a, struct timeval *b);

@@ -27,7 +27,6 @@ void FakeTran::TranData(double bandWidth,int blockSize,int toClientNum,int oper)
 	event.sockfd = mSockFd[1];
 	event.leftTime = sleepTime * 1000000;
 	event.leftTime -= (1000 * (globalModify - 1));
-//	LOG_INFO("sleep time is:" << event.leftTime);
 
 	int *ptr = (int *)event.buffer;
 	*ptr = MSG_FAKE_FIN;
@@ -35,8 +34,6 @@ void FakeTran::TranData(double bandWidth,int blockSize,int toClientNum,int oper)
 	*ptr = toClientNum;
 	ptr++;
 	*ptr = oper;
-//	ptr++;
-//	*ptr = segId;
 
 	globalTimer.RegisterTimer(event);
 }

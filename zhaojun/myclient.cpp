@@ -1,7 +1,3 @@
-
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <memory.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
@@ -16,7 +12,6 @@ MyClient::MyClient(ModelAssemble *model,int blockSize,int perSendSize,
 		int period,double lrfuLambda,bool isRepeat,int preFetch,bool special,bool isStartTogether){
 //	mServerFd = serverFd;
 	mIsStartTogether = isStartTogether;
-	mModel = model;
 	mOldFileId = -1;
 	mOldSegId = -1;
 	mPerSendSize = perSendSize;
@@ -148,45 +143,8 @@ void MyClient::Init(){
 }
 
 void MyClient::Run(){
-	fstream iofs;
-	bool readOrWrite = false;
-
 	TimerEvent timeEvent;
 
-	if(mIsRepeat){
-		stringstream sstream;
-		sstream.str("");
-		sstream << "data/requestFile" << mClientNum << ".log";
-		string requestFilename = sstream.str();
-		iofs.open(requestFilename.c_str(),ios::in);
-		readOrWrite = true;
-		if(iofs.fail()){
-			iofs.open(requestFilename.c_str(),ios::out);
-			readOrWrite = false;
-		}
-	}
-
-	if(mIsRepeat && readOrWrite){
-		iofs >> mFileId;
-		iofs >> mSegId;
-		iofs >> timeEvent.leftTime;
-		iofs >> mSegId;
-	}
-	else{
-		mFileId = mModel->GetStartFileId();
-		mSegId = mModel->GetStartSegId();
-		timeEvent.leftTime = mModel->GetStartTime(mClientNum) * 1000000;
-		if(mIsRepeat){
-			iofs << mFileId << endl;
-			iofs << mSegId << endl;
-			iofs << timeEvent.leftTime << endl;
-		}
-	}
-
-	if(mIsStartTogether)
-		timeEvent.leftTime = 0;
-
-	timeEvent.isNew = true;
 	timeEvent.sockfd = mFakeTran.GetOtherFd();
 
 	LOG_WRITE("",mRecordFs);
@@ -282,8 +240,6 @@ void MyClient::Run(){
 						memset(buffer,0,20);
 						int length = recv(events[i].data.fd,buffer,20,0);
 						DealWithMessage(buffer,length);
-//						int asdf = events[i].events == EPOLLIN ? 1 : 0;
-//						LOG_WRITE("my fd:" << events[i].data.fd << "    epollin:" << asdf << " length:" << length);
 					}
 				}
 				else{
@@ -315,7 +271,6 @@ void MyClient::Run(){
 							mSegId += mJumpSeg;
 							if(mSegId > mMaxSegId){
 								mSegId = 1;
-//								mSegId = mMaxSegId;
 							}
 							mJumpSeg = 0;
 //							char nullChar = '\0';

@@ -96,6 +96,18 @@ void Client::ThreadOfClient()
 	int nfds;
 	TimerEvent event;
 	int i;
+	ifstream input;
+
+	string input_filename = "data/requestFile" + m_id + ".log";
+	input.open(input_filename.c_str());
+	if (input.fail()) {
+		cout << "open " << input_filename << " error!" << endl;
+		exit(-1);
+	}
+	input >> m_fileid;
+	input >> m_segid;
+	//input >> timeEvent.leftTime;
+	//	iofs >> mSegId;
 
 	ptr[0] = MSG_CLIENT_JOIN;
 	ptr[1] = m_id;

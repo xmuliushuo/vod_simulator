@@ -26,6 +26,8 @@ private:
 	int m_epoll_fd;
 	int m_buffer_reset_fd[2];
 	int m_period;
+	int m_fileid;
+	int m_segid;
 	DBuffer *m_buffer;
 	string m_buffer_strategy;
 };

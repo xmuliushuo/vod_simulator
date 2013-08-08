@@ -270,8 +270,6 @@ void MyServer::TakeSample(){
 }
 
 void MyServer::Run(){
-//	LOG_INFO("server all fd:" << mListenSockFd[0] << "," << mListenSockFd[1]);
-
 	TimerEvent timerEvent;
 	timerEvent.isNew = true;
 	timerEvent.sockfd = mTakeSample[1];
