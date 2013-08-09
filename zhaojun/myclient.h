@@ -13,27 +13,6 @@
 #include "modelassemble.h"
 #include "faketran.h"
 
-#include "dbuffer.h"
-#include "dbufferlru.h"
-#include "dbufferlrut.h"
-#include "dbufferlfut.h"
-#include "dbuffermfut.h"
-#include "dbufferlfru.h"
-#include "dbufferlfu.h"
-#include "dbufferplfu.h"
-#include "dbuffermfu.h"
-#include "dbufferlrfu.h"
-#include "dbufferfifo.h"
-#include "dbufferdwq.h"
-#include "dbufferdwqr.h"
-#include "dbufferdwk.h"
-#include "dbufferdwkr.h"
-#include "dbufferdw.h"
-#include "dbufferdwr.h"
-#include "dbufferdwcc.h"
-#include "dbufferdwcct.h"
-#include "dbufferlrur.h"
-#include "dbuffermfur.h"
 #include <sys/socket.h>
 #include <pthread.h>
 
@@ -88,8 +67,7 @@ private:
 
 	ModelAssemble *mModel;
 	DBuffer *mDbuffer;
-	FakeTran mFakeTran;
-
+	
 	list<ClientReqBlock> mReqList;
 	int mBlockSize;
 	int mPerSendSize;

@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+#include "facktran.h"
+
 using namespace std;
 
 class DBuffer;
@@ -30,6 +32,7 @@ private:
 	int m_segid;
 	DBuffer *m_buffer;
 	string m_buffer_strategy;
+	FakeTran m_faketran;
 };
 
 #endif

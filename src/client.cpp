@@ -63,6 +63,10 @@ bool Client::Init(map<string, string> &config)
 	ev.events = EPOLLIN;
 	epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, m_buffer_reset_fd[0], &ev);
 
+	ev.data.fd = m_faketran.GetReadFd();
+	ev.events = EPOLLIN;
+	epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, m_faketran.GetReadFd(), &ev);
+
 	return true;
 }
 
@@ -106,8 +110,10 @@ void Client::ThreadOfClient()
 	}
 	input >> m_fileid;
 	input >> m_segid;
-	//input >> timeEvent.leftTime;
-	//	iofs >> mSegId;
+	input >> event.left_time;
+	input >> mSegId;
+	event.sockfd = m_faketran.GetWriteFd();
+	Timer::GetTimer()->RegisterTimer(event);
 
 	ptr[0] = MSG_CLIENT_JOIN;
 	ptr[1] = m_id;

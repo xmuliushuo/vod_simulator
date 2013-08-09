@@ -5,19 +5,10 @@
  *      Author: zhaojun
  */
 
-#include "faketran.h"
+
 #include "mymessage.h"
 
 #include "log.h"
-
-FakeTran::FakeTran(){
-	socketpair(AF_UNIX,SOCK_STREAM,0,mSockFd);
-}
-
-FakeTran::~FakeTran(){
-	close(mSockFd[0]);
-	close(mSockFd[1]);
-}
 
 void FakeTran::TranData(double bandWidth,int blockSize,int toClientNum,int oper){
 	//blockSize单位为KB

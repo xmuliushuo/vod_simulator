@@ -10,7 +10,6 @@ MyClient::MyClient(ModelAssemble *model,int blockSize,int perSendSize,
 		double bandWidth,int blockNums,int clientNum,int serverPort,int clientPort,int devNums,
 		int clientNums,char **clusterAddress,char *serverAddress,char *bufferStrategy,
 		int period,double lrfuLambda,bool isRepeat,int preFetch,bool special,bool isStartTogether){
-//	mServerFd = serverFd;
 	mIsStartTogether = isStartTogether;
 	mOldFileId = -1;
 	mOldSegId = -1;
@@ -23,8 +22,6 @@ MyClient::MyClient(ModelAssemble *model,int blockSize,int perSendSize,
 	mBufferStrategy = bufferStrategy;
 
 	mLrfuLambda = lrfuLambda;
-
-	mIsRepeat = isRepeat;
 
 	stringstream sstream;
 	sstream.str("");
@@ -54,8 +51,6 @@ MyClient::MyClient(ModelAssemble *model,int blockSize,int perSendSize,
 	mClientPort = clientPort;
 	mDevNums = devNums;
 	mClientNums = clientNums;
-
-	mServerAddress = serverAddress;
 
 	mMyPort = mClientPort + ((mClientNum - 1) % (mClientNums / mDevNums));
 	LOG_WRITE("Client " << mClientNum << " port is:" << mMyPort,mRecordFs);
@@ -132,10 +127,6 @@ void MyClient::Init(){
 	ev.events = EPOLLIN;
 	epoll_ctl(mEpollFd,EPOLL_CTL_ADD,mNetSockFd,&ev);
 
-	ev.data.fd = mFakeTran.GetFd();
-	ev.events = EPOLLIN;
-	epoll_ctl(mEpollFd,EPOLL_CTL_ADD,mFakeTran.GetFd(),&ev);
-
 	socketpair(AF_UNIX,SOCK_STREAM,0,mPlaySockFd);
 	ev.data.fd = mPlaySockFd[0];
 	ev.events = EPOLLIN;
@@ -143,14 +134,6 @@ void MyClient::Init(){
 }
 
 void MyClient::Run(){
-	TimerEvent timeEvent;
-
-	timeEvent.sockfd = mFakeTran.GetOtherFd();
-
-	LOG_WRITE("",mRecordFs);
-	LOG_WRITE("client " << mClientNum << " start time at:" << timeEvent.leftTime,mRecordFs);
-	globalTimer.RegisterTimer(timeEvent);
-
 	bool firstTime = true;
 	int toggleSwitch = 0;
 
@@ -158,8 +141,6 @@ void MyClient::Run(){
 	int readSegId = 1;
 
 	bool isFromBuffer = false;
-
-
 	while(true){
 		if(firstTime){
 			read(events[0].data.fd,buffer,20);
@@ -205,7 +186,6 @@ void MyClient::Run(){
 						epoll_event ev;
 						length = sizeof(clientAddr);
 						int clientFd = accept(mNetSockFd,(struct sockaddr *)&clientAddr,&length);
-//						mLinkedNums++;
 
 						char buffer[20];
 						int *ptr = (int *)buffer;
@@ -273,18 +253,14 @@ void MyClient::Run(){
 								mSegId = 1;
 							}
 							mJumpSeg = 0;
-//							char nullChar = '\0';
 							send(mPlaySockFd[1],buffer,20,0);
-//							continue;
 						}
 						else if(mPlayerStatus == BACKWARD){
 							mSegId -= mJumpSeg;
 							if(mSegId < 1)
 								mSegId = 1;
 							mJumpSeg = 0;
-//							char nullChar = '\0';
 							send(mPlaySockFd[1],buffer,20,0);
-//							continue;
 						}
 					}
 
