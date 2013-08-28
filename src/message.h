@@ -2,11 +2,26 @@
 #define MESSAGE_H_
 
 const int MESSAGELEN = 20;
+const int MAX_LISTEN_NUM = 100; 
+const int LBSERVER=1000000;
 
-#define MSG_CLIENT_JOIN	0
-#define MSG_SEG_ASK		8
-#define MSG_JOIN_ACK	10
+enum MessageType{
+    RESOURCEREQUEST,
+    REQUESTACK,
+    EXIT,
+    EXITACK
+};
 
-#define MAX_LISTEN_NUM	1000
+
+typedef struct Message{
+    unsigned int type;
+    unsigned int clientId;
+    unsigned int serverId;
+    union{
+        unsigned int fileId;
+        unsigned int playLen;
+    }info;
+}Message;
+
 
 #endif

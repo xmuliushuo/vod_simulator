@@ -1,41 +1,26 @@
-#ifndef SERVER_H_
-#define SERVER_H_
+#ifndef SERVER_H
+#define SERVER_H
 
-#include <netinet/in.h>
+#include "config.h"
 
-#include <string>
-#include <map>
 
-using namespace std;
-
-class Server;
-class DBuffer;
-
-struct RequestArgs{
-	Server *server;     /**< 指向Server */
-	struct sockaddr_in cliaddr; /**< 客户端的地址结构*/
-	int connfd;                 /**< 客户端的socket套接字*/
-};
-
-class Server {
+class Server
+{
 public:
-	Server();
-	~Server();
-	bool Init(map<string, string> &);
-	void Run();
-	void ThreadPerClient(int connfd);
-	void ThreadEvent();
-private:
-	void BufferReset();
-	bool m_p2p;
-	int m_port;
-	int m_block_size;
-	int m_block_num;
-	int m_event_fd;
-	int m_buffer_reset_fd[2];
-	int m_period;
-	DBuffer *m_buffer;
-	string m_buffer_strategy;
+	Server(int serverId):mServerId(serverId){ };
+	virtual ~Server(){};
+	int GetServerId()
+	{
+		return mServerId;
+	}
+
+	virtual bool Init(ConfigType &) = 0;	
+	virtual void Run() = 0;
+	/* data */
+
+protected:
+	int mServerId;
 };
+
 
 #endif

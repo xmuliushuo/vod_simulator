@@ -4,6 +4,11 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include <string>
 #include <map>
@@ -11,9 +16,28 @@
 #include <cerrno>
 #include <cstdlib>
 
+#include "sock.h"
+
 using namespace std;
 
 void ParseConfigFile(string, map<string, string> &);
+
+double Randomf(int a,int b);
+int Randomi(int a,int b);
+
+string numToString(int num);
+int stringToInt(const string &value);
+
+int mysleep(unsigned int usec);
+
+int getCurrentTime(struct timeval *tv);
+double getRelativeTime();
+double getTimeSlips(struct timeval *a,struct timeval *b);
+
+// int comp(const FileCount &a ,const FileCount &b);
+// int compS(const ServerLoad &a ,const ServerLoad &b);
+
+double  minDouble(double a,double b);
 
 inline int Socket(int family, int type, int protocol)
 {
@@ -109,6 +133,16 @@ inline void Pthread_detach(pthread_t tid)
 	errno = n;
 	cout << "pthread_detach error" << endl;
 	exit(1);
+}
+
+inline int TcpConnect(const char* host, const char* port)
+{
+	int ret = tcp_connect(host, port);
+	if(ret < 0){
+		cout << "tcp connetc error" << endl;
+		exit(1);
+	}
+	return ret;
 }
 
 #endif

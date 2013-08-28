@@ -64,7 +64,7 @@ void Timer::TimerThread()
 			if (sleep_time != -1) {
 				for (iter = m_timerlist.begin(); iter != m_timerlist.end();) {
 					iter->left_time -= sleep_time;
-					if (iter->left_time < 0) {
+					if (iter->left_time <= 0) {
 						WakeTimer(*iter);
 						iter = m_timerlist.erase(iter);
 					}
